@@ -10,6 +10,12 @@ use App\Contact;
 class ContactsController extends Controller
 {
     private $limit = 5;
+    private $rules = [
+      'name' => ['required', 'min:5'],
+      'company' => ['required'],
+      'email' => ['required', 'email']
+    ];
+
     public function index(Request $request)
     {
       if ($group_id = ($request->get('group_id'))){
@@ -25,18 +31,30 @@ class ContactsController extends Controller
       return view('contacts.create');
     }
 
+    public function edit($id)
+    {
+      $contact = Contact::find($id);
+      return view('contacts.edit', compact('contact'));
+    }
+
     public function store(Request $request)
     {
-      $rules = [
-        'name' => ['required', 'min:5'],
-        'company' => ['required'],
-        'email' => ['required', 'email']
-      ];
 
-      $this->validate($request, $rules);
+      $this->validate($request, $this->rules);
 
       Contact::create($request->all());
 
       return redirect('contacts')->with('message', 'Contact saved!');
+    }
+
+    public function update($id, Request $request)
+    {
+
+      $this->validate($request, $this->rules);
+
+      $contact = Contact::find($id);
+      $contact->update($request->all());
+
+      return redirect('contacts')->with('message', 'Contact updated!');
     }
 }
