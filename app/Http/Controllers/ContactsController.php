@@ -19,4 +19,9 @@ class ContactsController extends Controller
       }
       return view('contacts.index', ['contacts' => $contacts]);
     }
+
+    public function create()
+    {
+      return view('contacts.create');
+    }
 }
