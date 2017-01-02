@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Group;
+
 class GroupsController extends Controller
 {
     public function store(Request $request)
@@ -11,6 +13,7 @@ class GroupsController extends Controller
       $this->validate($request, [
         'name' => 'required|unique:groups'
       ]);
-      echo "1";
+
+      return Group::create($request->all());
     }
 }
