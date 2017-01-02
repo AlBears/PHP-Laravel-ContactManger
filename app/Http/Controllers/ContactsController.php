@@ -18,10 +18,33 @@ class ContactsController extends Controller
     ];
     private $upload_dir = '/public/uploads';
 
+
     public function __construct()
     {
       $this->upload_dir = base_path() . '/' . $this->upload_dir;
     }
+
+
+    public function autocomplete(Request $request)
+    {
+      if ($request->ajax())
+      {
+        return Contact::select(['id', 'name as value'])->where(function($query) use ($request){
+                          if ( ($term = $request->get('term')))
+                          {
+                              $keywords = '%' . $term . '%';
+                              $query->orWhere('name', 'LIKE', $keywords);
+                              $query->orWhere('company', 'LIKE', $keywords);
+                              $query->orWhere('email', 'LIKE', $keywords);
+                          }
+                      })
+                      ->orderBy('name', 'asc')
+                      ->take(5)
+                      ->get();
+      }
+
+    }
+
 
     public function index(Request $request)
     {
@@ -44,16 +67,19 @@ class ContactsController extends Controller
       return view('contacts.index', ['contacts' => $contacts]);
     }
 
+
     public function create()
     {
       return view('contacts.create');
     }
+
 
     public function edit($id)
     {
       $contact = Contact::find($id);
       return view('contacts.edit', compact('contact'));
     }
+
 
     public function store(Request $request)
     {
@@ -66,6 +92,7 @@ class ContactsController extends Controller
 
       return redirect('contacts')->with('message', 'Contact saved!');
     }
+
 
     private function getRequest(Request $request)
     {
@@ -83,6 +110,7 @@ class ContactsController extends Controller
 
       return $data;
     }
+
 
     public function update($id, Request $request)
     {
@@ -102,6 +130,7 @@ class ContactsController extends Controller
       return redirect('contacts')->with('message', 'Contact updated!');
     }
 
+
     public function destroy($id)
     {
       $contact = Contact::find($id);
@@ -112,6 +141,7 @@ class ContactsController extends Controller
 
       return redirect('contacts')->with('message', 'Contact deleted!');
     }
+
 
     private function removePhoto($photo)
     {
