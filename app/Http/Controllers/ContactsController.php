@@ -21,6 +21,7 @@ class ContactsController extends Controller
 
     public function __construct()
     {
+      $this->middleware('auth');
       $this->upload_dir = base_path() . '/' . $this->upload_dir;
     }
 
