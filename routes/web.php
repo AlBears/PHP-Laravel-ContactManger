@@ -16,3 +16,7 @@ Route::get('contacts/autocomplete', [
 ]);
 
 Route::resource('contacts', 'ContactsController');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index');
