@@ -20,3 +20,7 @@ Route::resource('contacts', 'ContactsController');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
+
+Route::any('{query}',
+    function() { return redirect('/home'); })
+    ->where('query', '.*');
