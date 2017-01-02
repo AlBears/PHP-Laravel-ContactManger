@@ -101,5 +101,6 @@
         })
       })
     </script>
+    @yield('form-script')
   </body>
 </html>

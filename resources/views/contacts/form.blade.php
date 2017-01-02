@@ -59,7 +59,7 @@
             <div class="input-group">
               <input type="text" name="new_group" id="new_group" class="form-control">
               <span class="input-group-btn">
-                <a href="#" class="btn btn-default">
+                <a href="#" id="add-new-btn" class="btn btn-default">
                   <i class="glyphicon glyphicon-ok"></i>
                 </a>
               </span>
@@ -70,8 +70,8 @@
       <div class="col-md-4">
         <div class="fileinput fileinput-new" data-provides="fileinput">
           <div class="fileinput-new thumbnail" style="width: 150px; height: 150px;">
-            <?php $photo = !is_null($contact->photo) ? $contact->photo : 'default.png' ?>
-            {{ Html::image('uploads/' . $photo, $contact->name, ['width' => 150, 'height' => 150]) }}
+            <?php $photo = 'default.png' ?>
+            {{ Html::image('uploads/' . $photo, null, ['width' => 150, 'height' => 150]) }}
 
           </div>
           <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
@@ -97,3 +97,41 @@
     </div>
   </div>
 </div>
+
+@section('form-script')
+  <script>
+    $("#add-new-group").hide();
+    $("#add-group-btn").click(function() {
+      $("#add-new-group").slideToggle(function(){
+        $("#new_group").focus();
+      });
+      return false;
+    });
+
+    $("#add-new-btn").click(function() {
+      var newGroup = $('#new_group');
+      $.ajax({
+        url: "{{ route('groups.store') }}",
+        method: "post",
+        data: {
+          name: $("#new_group").val(),
+          _token: $("input[name=_token]").val()
+        },
+        success: function(response) {
+          console.log(response);
+        },
+        error: function(xhr) {
+          var errors = xhr.responseJSON;
+          var error = errors.name[0];
+          if (error) {
+            var inputGroup = newGroup.closest('.input-group');
+            inputGroup.next('.text-danger').remove();
+            inputGroup
+              .addClass('has-error')
+              .after('<p class="text-danger">'+ error + '</p>');
+          }
+        }
+      });
+    });
+  </script>
+@endsection
