@@ -80,7 +80,8 @@ class ContactsController extends Controller
 
     public function edit($id)
     {
-      $contact = Contact::find($id);
+      $contact = Contact::findOrFail($id);
+      $this->authorize('modify', $contact);
       return view('contacts.edit', compact('contact'));
     }
 
@@ -118,10 +119,11 @@ class ContactsController extends Controller
 
     public function update($id, Request $request)
     {
+      $contact = Contact::findOrFail($id);
+      $this->authorize('modify', $contact);
 
       $this->validate($request, $this->rules);
 
-      $contact = Contact::find($id);
       $oldPhoto = $contact->photo;
 
       $data = $this->getRequest($request);
@@ -137,7 +139,8 @@ class ContactsController extends Controller
 
     public function destroy($id)
     {
-      $contact = Contact::find($id);
+      $contact = Contact::findOrFail($id);
+      $this->authorize('modify', $contact);
 
       $contact->delete();
 
