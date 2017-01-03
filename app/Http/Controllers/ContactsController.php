@@ -50,6 +50,9 @@ class ContactsController extends Controller
     public function index(Request $request)
     {
       $contacts = Contact::where(function($query) use ($request){
+                        // filter by current user
+                        $query->where("user_id", $request->user()->id);
+
                         if ($group_id = ($request->get('group_id'))){
                             $query->where('group_id', $group_id);
                         }
@@ -89,7 +92,7 @@ class ContactsController extends Controller
 
       $data = $this->getRequest($request);
 
-      Contact::create($data);
+      $request->user()->contacts()->create($data);
 
       return redirect('contacts')->with('message', 'Contact saved!');
     }
